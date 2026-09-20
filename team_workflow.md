@@ -5,20 +5,6 @@
 
 _All team members have read and approved this workflow and have reviewed the course writing guidelines. The team agrees to follow the processes described below and to update this document if roles, responsibilities, or team processes change._
 
-Team Blue is developing an AI-assisted job application management platform that helps users organize job applications, tailor resumes to individual job postings, draft recruiter outreach, and track application status.
-
-Core planned functionality includes:
-
-- A user profile containing skills, relevant experience, application history, and a sample resume
-- Tracking jobs that are applied to, waiting, accepted, or rejected
-- Importing or pasting a job description, including HTML files
-- AI-generated resumes tailored to individual job postings
-- AI-generated recruiter outreach emails
-- An application-tracking dashboard that can be updated manually and, where possible, through parsed email updates
-- An in-application resume editor where users can review AI changes, provide feedback, and request revisions
-- Explanations from the AI describing why significant resume changes were made
-- Resume export and download as PDF
-
 ## Roles
 
 ### Subat Ahsan
