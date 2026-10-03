@@ -88,7 +88,7 @@ Patrick is a compliance investigator at the Office of the Privacy Commissioner o
 - Repeat in several major browsers with different file types
 
 ### User Story 2
-**User story:** As an active applicant, I want to easily record my job applications in one place, so that I can quickly see the companies, roles, dates, and current statuses of my applications.
+**User story:** As Andre, I want to easily record my job applications in one place, so that I can quickly see the companies, roles, dates, and current statuses of my applications.
 
 **Source and rationale:** According to [a reddit thread](https://www.reddit.com/r/jobsearchhacks/comments/1px8h91/how_does_everyone_track_their_job_applications/), most job seekers don't have a good way to track their applications, commonly resorting to messy spreadsheets or other less effective methods. It also shows that others are interested in a better method for storing their application data.
 
