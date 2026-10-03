@@ -236,4 +236,21 @@ Patrick is a compliance investigator at the Office of the Privacy Commissioner o
 
 ## Initial Scope
 
+- **Selected:** Included in the semester scope.
+- **Deferred:** Potentially useful, but outside the current scope.
+- **Rejected:** Not appropriate for this project.
+
+| # | User Story | Persona | Type | Decision | Priority | Rationale |
+|---|---|---|---|---|---|---|
+| 1 | Secure Resume Upload | Patrick | Quality – Security (Confidentiality) | **Deferred** | N/A | Security and compliance become more relevant once the core product is functional. Since it is uncertain whether the application will reach a sufficiently complete deployment state this semester, development effort will first focus on core functionality. |
+| 2 | Application Tracking Dashboard | Active Applicant | Functional | **Selected** | **High** | Application tracking is a core feature of ApplyPilot and directly supports users in organizing and reviewing their job applications. |
+| 3 | Tailored Resume Generation | Priya Mehta | Functional | **Selected** | **High** | Resume tailoring is a core ApplyPilot feature and can be implemented using the user's professional profile, resume template, and job description. |
+| 4 | Resume Generation Speed | Priya Mehta | Quality – Performance (Time) | **Selected** | **Low** | Generation time directly affects the usability of the resume-generation feature and can be objectively measured during testing. |
+| 5 | Company & Role Research | Sofia Nguyen | Functional | **Selected** | **Low** | Providing cited company and role information directly supports interview preparation and can be implemented using publicly available information, so it isn't very difficult. This can be beneficial since it saves users the research time. However as it is not a core part of our app, it is low priority. |
+| 6 | Past Interview Question Retrieval | Sofia Nguyen | Functional | **Selected** | **High** |  Retrieving previously reported interview questions supports interview preparation while remaining verifiable through links to the original public sources, so it isn't extremely difficult to implement. It is a core part of helping people with interviews which is why it is high priority. |
+| 7 | Verified Interview Answer Assistance | Sofia Nguyen | Functional | **Rejected** | N/A | The user's professional profile does not contain enough personal context to reliably construct appropriate STAR responses. Supporting this feature would require substantially more personal information than ApplyPilot is intended to collect. |
+| 8 | Quick Application Entry | Andre | Quality – Usability | **Rejected** | N/A | A fixed application-entry time is not appropriate across all job postings. Some postings cannot be automatically imported from saved HTML and may require manual entry, making the required completion time highly dependent on the source. |
+| 9 | Tailored Outreach Message Generation | Riya Shah | Functional | **Selected** | **Medium** | Outreach drafts can be generated from information already available to ApplyPilot, such as the company, role, and user's verified professional experience. This automates what a lot of people find tedious. However, it is considered an extra for the job application process which is why it is medium priority. |
+
 ## Questions to Clarify
+Currently we do not have questions that require any clarifications.
