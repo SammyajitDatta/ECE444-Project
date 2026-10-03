@@ -38,7 +38,7 @@ Andre is an early-career professional actively applying to several roles through
 Name: Sofia Nguyen
 
 Description:
-Sofia has been invited to interview for a role after submitting an application. She understands the general responsibilities in the job description but does not know how to efficiently research the company, its products, its values, and the expectations of the specific role. Sofia wants to practise likely interview questions and connect her own experiences to the skills that the employer may assess.
+Sofia has been invited to interview for a role after submitting an application. She understands the general responsibilities in the job description but does not know how to efficiently research the company, its products, its values, and the expectations of the specific role. Sofia wants to practice likely interview questions and connect her own experiences to the skills that the employer may assess.
 
 
 ### External Stakeholder Role 1: Talent Acquisition Coordinator / HR Screener
