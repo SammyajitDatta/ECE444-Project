@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import math
 from datetime import date
+from pathlib import Path
+from uuid import uuid4
+import json
 
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, jsonify, request, current_app
 from sqlalchemy import ColumnElement, func, select
 from sqlalchemy.orm import joinedload
 
-from models import Application, ApplicationStatus, User, db
+from models import Application, ApplicationStatus, User, Job, db
 
 bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -126,3 +129,125 @@ def update_application_status(application_id: int) -> Response:
 
     db.session.commit()
     return jsonify(application.to_dict())
+
+
+@bp.post("/applications")
+def create_application() -> Response:
+    """
+    Creates a Job and Application together.
+
+    Expects multipart/form-data with:
+      Job:
+        title
+        company_name
+        job_type
+        salary_low
+        salary_high
+        required_skills
+        preferred_skills
+        perks
+        about
+
+      Application:
+        date_applied
+
+      Files:
+        resume
+        cover_letter
+        transcript
+    """
+    user = current_user()
+    if user is None:
+        raise ApiError("User not found", 404)
+
+    title = request.form.get("title")
+    company_name = request.form.get("company_name")
+
+    if not title:
+        raise ApiError("'title' is required")
+
+    if not company_name:
+        raise ApiError("'company_name' is required")
+
+    def json_list_field(name: str) -> list[str]:
+        raw = request.form.get(name)
+
+        if not raw:
+            return []
+
+        try:
+            value = json.loads(raw)
+        except json.JSONDecodeError:
+            raise ApiError(f"'{name}' must be a JSON array")
+
+        if not isinstance(value, list) or not all(
+            isinstance(item, str) for item in value
+        ):
+            raise ApiError(f"'{name}' must be a JSON array of strings")
+
+        return value
+
+    required_skills = json_list_field("required_skills")
+    preferred_skills = json_list_field("preferred_skills")
+    perks = json_list_field("perks")
+
+    raw_date = request.form.get("date_applied")
+
+    if raw_date:
+        try:
+            date_applied = date.fromisoformat(raw_date)
+        except ValueError:
+            raise ApiError("'date_applied' must be formatted YYYY-MM-DD")
+    else:
+        date_applied = date.today()
+
+    upload_root = Path(current_app.config["UPLOAD_FOLDER"])
+    user_upload_dir = upload_root / str(user.id)
+    user_upload_dir.mkdir(parents=True, exist_ok=True)
+
+    def save_upload(field_name: str) -> str | None:
+        file = request.files.get(field_name)
+
+        if file is None or file.filename == "":
+            return None
+
+        filename = uuid4().hex
+        path = user_upload_dir / filename
+
+        file.save(path)
+
+        return f"{user.id}/{filename}"
+
+    resume_path = save_upload("resume")
+    cover_letter_path = save_upload("cover_letter")
+    transcript_path = save_upload("transcript")
+
+    job = Job(
+        title=title,
+        company_name=company_name,
+        job_type=request.form.get("job_type"),
+        salary_low=request.form.get("salary_low"),
+        salary_high=request.form.get("salary_high"),
+        required_skills=required_skills,
+        preferred_skills=preferred_skills,
+        perks=perks,
+        about=request.form.get("about"),
+    )
+
+    db.session.add(job)
+    db.session.flush()
+
+    application = Application(
+        user_id=user.id,
+        job_id=job.id,
+        date_applied=date_applied,
+        status=ApplicationStatus.APPLIED,
+        resume_path=resume_path,
+        cover_letter_path=cover_letter_path,
+        transcript_path=transcript_path,
+    )
+
+    db.session.add(application)
+    db.session.commit()
+
+    return jsonify(application.to_dict()), 201

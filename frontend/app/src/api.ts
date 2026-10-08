@@ -31,3 +31,21 @@ export async function updateApplicationStatus(id: number, status: ApplicationSta
   }
   return (await res.json()) as Application;
 }
+
+export async function createApplication(
+  formData: FormData
+): Promise<Application> {
+  const response = await fetch("/api/applications", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(
+      data?.error ?? "Couldn't create application"
+    );
+  }
+
+  return response.json();
+}

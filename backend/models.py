@@ -72,7 +72,7 @@ class Job(db.Model):
     perks: Mapped[list[str]] = mapped_column(JSON, default=list)
     about: Mapped[str | None] = mapped_column(Text, default=None)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
-
+    
     def to_dict(self) -> dict[str, Any]:
         return {
             "id": self.id,
