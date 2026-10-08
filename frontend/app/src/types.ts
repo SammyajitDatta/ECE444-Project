@@ -16,7 +16,7 @@ export interface Job {
   company_name: string;
   job_type: JobType | null;
   salary_low: string | null;
-  salary_high: string | null; // null when the posting lists a single figure
+  salary_high: string | null; 
   required_skills: string[];
   preferred_skills: string[];
   perks: string[];

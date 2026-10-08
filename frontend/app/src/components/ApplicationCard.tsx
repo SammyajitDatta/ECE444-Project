@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { CSSProperties } from "react";
+import { Link } from "react-router-dom";
 import type { Application, ApplicationStatus } from "../types";
 import { APPLICATION_STATUSES } from "../types";
 import { colors, font, statusColors, statusLabels } from "../theme";
@@ -15,13 +17,24 @@ function formatDate(iso: string): string {
 
 const base: CSSProperties = {
   background: colors.card, borderRadius: 12, padding: "20px 22px 20px 24px", margin: 0,
-  display: "flex", flexDirection: "column", gap: 4,
+  display: "flex", flexDirection: "column",
   boxShadow: "0 10px 24px rgba(16, 32, 44, 0.20), 0 2px 4px rgba(16, 32, 44, 0.12)",
+  transition: "transform 150ms ease, box-shadow 150ms ease",
+};
+
+const liftedShadow = "0 18px 36px rgba(16, 32, 44, 0.30), 0 4px 8px rgba(16, 32, 44, 0.16)";
+
+// Everything except the dropdown is one link, so clicking the dropdown never navigates.
+const link: CSSProperties = {
+  display: "flex", flexDirection: "column", gap: 4, color: "inherit", textDecoration: "none",
 };
 
 export function ApplicationCard({ application, onStatusChange }: Props) {
   const { job, status } = application;
   const color = statusColors[status];
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const lifted = hovered || focused; // keyboard users get the same lift as mouse users
 
   const select: CSSProperties = {
     marginTop: 14, font: `500 14px ${font}`, color, background: `${color}1F`,
@@ -29,12 +42,25 @@ export function ApplicationCard({ application, onStatusChange }: Props) {
   };
 
   return (
-    <article style={{ ...base, borderLeft: `6px solid ${color}` }}>
-      <div style={{ fontSize: 14, fontWeight: 500, color: colors.muted }}>{job.company_name}</div>
-      <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, lineHeight: 1.25 }}>{job.title}</h2>
-      <time dateTime={application.date_applied} style={{ fontSize: 14, color: colors.muted, marginTop: 6 }}>
-        Applied {formatDate(application.date_applied)}
-      </time>
+    <article
+      style={{
+        ...base,
+        borderLeft: `6px solid ${color}`,
+        transform: lifted ? "translateY(-4px)" : "none",
+        boxShadow: lifted ? liftedShadow : base.boxShadow,
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+    >
+      <Link to={`/applications/${application.id}`} style={link}>
+        <div style={{ fontSize: 14, fontWeight: 500, color: colors.muted }}>{job.company_name}</div>
+        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, lineHeight: 1.25 }}>{job.title}</h2>
+        <time dateTime={application.date_applied} style={{ fontSize: 14, color: colors.muted, marginTop: 6 }}>
+          Applied {formatDate(application.date_applied)}
+        </time>
+      </Link>
       <select
         style={select}
         value={status}

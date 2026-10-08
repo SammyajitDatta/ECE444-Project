@@ -49,3 +49,18 @@ export async function createApplication(
 
   return response.json();
 }
+
+export type FileKind = "resume" | "cover_letter" | "transcript";
+ 
+export async function fetchApplication(id: number, signal?: AbortSignal): Promise<Application> {
+  const res = await fetch(`/api/applications/${id}`, { signal });
+  if (!res.ok) {
+    const body: { error?: string } = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Request failed (${res.status})`);
+  }
+  return (await res.json()) as Application;
+}
+ 
+export function fileUrl(applicationId: number, kind: FileKind): string {
+  return `/api/applications/${applicationId}/files/${kind}`;
+}

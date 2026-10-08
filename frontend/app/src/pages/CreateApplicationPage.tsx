@@ -107,7 +107,6 @@ export default function CreateApplicationPage() {
   const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
   const [preferredSkills, setPreferredSkills] = useState<string[]>([]);
   const [perks, setPerks] = useState<string[]>([]);
-  const [jobDescription, setJobDescription] = useState("");
   const [about, setAbout] = useState("");
   const [dateApplied, setDateApplied] = useState(today);
 
@@ -142,7 +141,6 @@ export default function CreateApplicationPage() {
       formData.append("preferred_skills", JSON.stringify(preferredSkills));
       formData.append("perks", JSON.stringify(perks));
 
-      if (jobDescription.trim()) formData.append("job_description", jobDescription.trim());
       if (about.trim()) formData.append("about", about.trim());
       if (dateApplied) formData.append("date_applied", dateApplied);
       if (resume) formData.append("resume", resume);
@@ -265,26 +263,15 @@ export default function CreateApplicationPage() {
             />
           </section>
 
-          {/* Section 3: Job Description & About */}
           <section style={cardSectionStyle}>
             <h2 style={sectionTitleStyle}>Descriptions & Notes</h2>
-
-            <label style={fieldStyle}>
-              <span style={labelStyle}>Job Description</span>
-              <TextArea
-                value={jobDescription}
-                onChange={setJobDescription}
-                placeholder="Paste official job description, responsibilities, or requirements here..."
-                rows={5}
-              />
-            </label>
 
             <label style={fieldStyle}>
               <span style={labelStyle}>About</span>
               <TextArea
                 value={about}
                 onChange={setAbout}
-                placeholder="Company Notes"
+                placeholder="Job Description"
                 rows={3}
               />
             </label>

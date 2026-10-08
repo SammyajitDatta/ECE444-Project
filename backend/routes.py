@@ -6,9 +6,10 @@ from pathlib import Path
 from uuid import uuid4
 import json
 
-from flask import Blueprint, Response, jsonify, request, current_app
+from flask import Blueprint, Response, current_app, jsonify, request, send_from_directory
 from sqlalchemy import ColumnElement, func, select
 from sqlalchemy.orm import joinedload
+from werkzeug.utils import secure_filename
 
 from models import Application, ApplicationStatus, User, Job, db
 
@@ -16,6 +17,13 @@ bp = Blueprint("api", __name__, url_prefix="/api")
 
 DEFAULT_PER_PAGE = 12
 MAX_PER_PAGE = 100
+
+# URL segment -> Application column holding the stored file path
+FILE_FIELDS: dict[str, str] = {
+    "resume": "resume_path",
+    "cover_letter": "cover_letter_path",
+    "transcript": "transcript_path",
+}
 
 
 class ApiError(Exception):
@@ -33,6 +41,15 @@ def handle_api_error(err: ApiError) -> tuple[Response, int]:
 def current_user() -> User | None:
     """Placeholder until auth exists: everything runs as the first user."""
     return db.session.get(User, 1)
+
+
+def _get_own_application(application_id: int) -> Application:
+    """Fetch an application belonging to the current user, or 404."""
+    user = current_user()
+    application = db.session.get(Application, application_id)
+    if application is None or user is None or application.user_id != user.id:
+        raise ApiError(f"Application {application_id} not found", 404)
+    return application
 
 
 def _int_arg(name: str, default: int, minimum: int, maximum: int | None = None) -> int:
@@ -108,6 +125,34 @@ def list_applications() -> Response:
         total=total,
         total_pages=max(1, math.ceil(total / per_page)),
     )
+
+@bp.get("/applications/<int:application_id>")
+def get_application(application_id: int) -> Response:
+    """Full application plus its job. 404 if it doesn't exist or isn't yours."""
+    return jsonify(_get_own_application(application_id).to_dict())
+
+
+@bp.get("/applications/<int:application_id>/files/<kind>")
+def download_application_file(application_id: int, kind: str) -> Response:
+    """Download one of the application's documents. kind: resume | cover_letter | transcript."""
+    column = FILE_FIELDS.get(kind)
+    if column is None:
+        valid = ", ".join(FILE_FIELDS)
+        raise ApiError(f"Unknown file type '{kind}'. Valid types: {valid}", 404)
+
+    application = _get_own_application(application_id)
+    relative: str | None = getattr(application, column)
+    upload_root = Path(current_app.config["UPLOAD_FOLDER"])
+    if not relative or not (upload_root / relative).is_file():
+        raise ApiError(f"No {kind.replace('_', ' ')} on file for this application", 404)
+
+    # Files are stored under random names; give the download a readable one.
+    job = application.job
+    stem = secure_filename(f"{kind}_{job.company_name}_{job.title}") or kind
+    return send_from_directory(
+        upload_root, relative, as_attachment=True, download_name=f"{stem}{Path(relative).suffix}"
+    )
+
 
 @bp.patch("/applications/<int:application_id>/status")
 def update_application_status(application_id: int) -> Response:
