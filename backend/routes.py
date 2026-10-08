@@ -211,7 +211,9 @@ def create_application() -> Response:
         if file is None or file.filename == "":
             return None
 
-        filename = uuid4().hex
+        ext = Path(file.filename).suffix.lower()
+
+        filename = f"{uuid4().hex}{ext}"
         path = user_upload_dir / filename
 
         file.save(path)
