@@ -105,3 +105,24 @@ def list_applications() -> Response:
         total=total,
         total_pages=max(1, math.ceil(total / per_page)),
     )
+
+@bp.patch("/applications/<int:application_id>/status")
+def update_application_status(application_id: int) -> Response:
+    """Body: {"status": "offer"}. 404 if the application doesn't exist, 400 if the status is invalid."""
+    user = current_user()
+    application = db.session.get(Application, application_id)
+    if application is None or user is None or application.user_id != user.id:
+        raise ApiError(f"Application {application_id} not found", 404)
+
+    body = request.get_json(silent=True)
+    raw_status = body.get("status") if isinstance(body, dict) else None
+    if not isinstance(raw_status, str):
+        raise ApiError('Request body must be JSON like {"status": "offer"}')
+    try:
+        application.status = ApplicationStatus(raw_status)
+    except ValueError:
+        valid = ", ".join(s.value for s in ApplicationStatus)
+        raise ApiError(f"Invalid status '{raw_status}'. Valid statuses: {valid}")
+
+    db.session.commit()
+    return jsonify(application.to_dict())

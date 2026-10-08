@@ -1,4 +1,4 @@
-import type { Application, ApplicationFilters, Paginated } from "./types";
+import type { Application, ApplicationFilters, Paginated, ApplicationStatus } from "./types";
 
 export async function fetchApplications(
   filters: ApplicationFilters,
@@ -17,4 +17,17 @@ export async function fetchApplications(
     throw new Error(body.error ?? `Request failed (${res.status})`);
   }
   return (await res.json()) as Paginated<Application>;
+}
+
+export async function updateApplicationStatus(id: number, status: ApplicationStatus): Promise<Application> {
+  const res = await fetch(`/api/applications/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) {
+    const body: { error?: string } = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Request failed (${res.status})`);
+  }
+  return (await res.json()) as Application;
 }

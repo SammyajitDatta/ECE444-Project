@@ -2,11 +2,11 @@ import type { CSSProperties } from "react";
 import type { ApplicationStatus } from "./types";
 
 export const colors = {
-  page: "#E8EDF1",
+  page: "#C4CFD8",
   card: "#FFFFFF",
   ink: "#10202C",
-  muted: "#5D6D7A",
-  line: "#CBD5DD",
+  muted: "#44535F",
+  line: "#9AA9B5",
   accent: "#10202C",
 } as const;
 
