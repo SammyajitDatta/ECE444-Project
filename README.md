@@ -17,7 +17,7 @@ Applying for jobs can involve repeatedly updating resumes, tracking applications
 | Master resume | Upload or manually enter a reusable master resume. | Prototype implemented |
 | Tailored resume generation | Generate a resume draft based on a job description and a selected template. | Functional prototype; formatting needs improvement |
 | Resume preview and export | Preview the generated PDF and download it. | Prototype implemented |
-| Application tracking | Track applications and their current stages. | Planned |
+| Application tracking | Track applications and their current stages. | Functional prototype |
 | Email-assisted status updates | Use relevant emails to help update application status. | Planned |
 | Interview practice | Prepare for interviews using a question pool. | Planned |
 | Recruiter outreach | Draft personalized outreach messages. | Planned |
