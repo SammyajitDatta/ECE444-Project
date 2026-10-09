@@ -1,0 +1,13 @@
+{
+  "name": "applypilot",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c yellow,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "test": "node --test server/tests/*.test.mjs"
+  },
+  "devDependencies": { "concurrently": "^9.2.1" }
+}
