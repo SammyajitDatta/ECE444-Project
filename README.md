@@ -30,7 +30,8 @@ Job seekers often maintain multiple versions of their resumes, manually record a
 
 ## Prerequisites
 
-- [Node.js and npm](https://nodejs.org/) (a version compatible with the project's `package.json`).
+- [Node.js and npm](https://nodejs.org/) (a version compatible with the project's `package.json`) for React frontend development.
+- [Python](https://www.python.org/) for running the Flask backend.
 - [Git](https://git-scm.com/) to clone the repository and switch branches.
 - A modern web browser.
 - A code editor, such as Visual Studio Code.
@@ -39,14 +40,12 @@ Job seekers often maintain multiple versions of their resumes, manually record a
 
 | Technology or Tool | Purpose |
 | --- | --- |
-| [React](https://react.dev/) | Frontend user interface, including the resume-generation feature. |
-| JavaScript and JSX | React components and application behavior. |
-| HTML and CSS | Browser page structure and application styling. React typically renders HTML through JSX; CSS handles layout and presentation. |
-| [Node.js](https://nodejs.org/) and npm | Run the frontend development tooling and install project dependencies. Node.js is not being identified here as the application's backend framework. |
-| Git and GitHub | Source control, collaboration, and project management. |
-| Database models and CRUD APIs | Backend functionality used by the Application View; these are application components, **not React tooling**. The backend framework and database technology have not yet been confirmed. |
-
-React does **not** replace HTML, CSS, or JavaScript. You generally write React components in JavaScript/JSX, style them with CSS, and the browser ultimately displays HTML. The separate Application View backend uses database models and CRUD APIs, which should be documented further once its technology stack and setup commands are confirmed.
+| [React](https://react.dev/) | Frontend user interface and resume-generation workflow. |
+| JavaScript / JSX | React components and frontend application logic. |
+| HTML and CSS | Webpage structure and styling; React uses JSX to describe the elements rendered in the browser. |
+| [Node.js](https://nodejs.org/) and npm | Install frontend dependencies and run the React development server. |
+| [Python](https://www.python.org/) and [Flask](https://flask.palletsprojects.com/) | Backend application and HTTP API development. |
+| [Git](https://git-scm.com/) and [GitHub](https://github.com/) | Version control and team collaboration. |
 
 ### Suggested Tooling
 
@@ -58,12 +57,12 @@ React does **not** replace HTML, CSS, or JavaScript. You generally write React c
 
 ### Run Tailored Resume Generation
 
-The tailored resume-generation frontend is available on the `resume-generation` branch.
+The tailored resume-generation frontend is available on the `resume_generation` branch.
 
 ```bash
 git clone https://github.com/SammyajitDatta/ECE444-Project.git
 cd ECE444-Project
-git switch resume-generation
+git switch resume_generation
 npm install
 npm run dev
 ```
@@ -74,25 +73,31 @@ If `package.json` is within a subdirectory rather than the branch root, navigate
 
 From the running interface, users can provide master-resume content and a job description, choose a resume template, and generate and preview a tailored PDF.
 
-### Application View
+### Run Application View
 
-The Application View includes models for users, jobs, and applications, as well as CRUD APIs for jobs and applications. Its backend framework, database, and launch commands have not been confirmed for this README; setup instructions will be added once those details are available.
+The Application View uses a React frontend and a Flask backend, including models for users, jobs, and applications and CRUD APIs for jobs and applications.
 
-## Build and Run Instructions
+**Frontend:** From the project directory, navigate to `frontend/app`, install dependencies, and start the development server:
 
-To **run the resume-generation frontend locally for development**, use `npm install` followed by `npm run dev`, as shown above. Do not open `index.html` directly or use VS Code Live Server as the recommended setup for the React project.
+```bash
+cd frontend/app
+npm install
+npm run dev
+```
 
-A separate production build command and deployment procedure have not yet been verified. `npm run dev` starts the development server; it is not a production build.
+**Backend:** In a separate terminal, navigate to the directory containing `app.py`, then run:
+
+```bash
+python app.py
+```
+
+Keep both development processes running while using the Application View. The precise backend directory path has not been specified.
 
 ## Testing
 
 The team has performed unit testing, usability testing, and teammate code reviews while developing the features. **The automated test suite and instructions to run it are not publicly available yet.** Therefore, no public test command or test-report link is provided at this time.
 
 Once tests are made available in the repository, this section will document their prerequisites and exact commands. Contributors can currently review the user-facing functionality manually after starting the development server, but manual checks are not a substitute for the unpublished tests.
-
-## Local Deployment
-
-The resume-generation feature runs locally using `npm run dev` in the `resume-generation` branch after dependencies have been installed. This is a **development environment**, not a production deployment. Instructions for running the integrated application and deploying to production have not yet been published.
 
 ## Project Management Tools
 
@@ -114,7 +119,7 @@ If a separate GitHub Projects board or another project-management tool is being 
 - Test features before merging, and do not commit credentials or API keys.
 - Keep this README updated when the project's tools or setup steps change.
 
-For further collaboration rules, see [CONTRIBUTING.md](CONTRIBUTING.md) when added. For conduct expectations, see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) when added.
+For further collaboration rules, see [CONTRIBUTING.md](Contribution.md) when added. For conduct expectations, see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) when added.
 
 ## Team Members
 
@@ -125,12 +130,7 @@ For further collaboration rules, see [CONTRIBUTING.md](CONTRIBUTING.md) when add
 
 ## Project Documentation
 
-Project requirements, design documents, and other technical documentation are maintained in the [GitHub repository](https://github.com/SammyajitDatta/ECE444-Project). Links to specific documents can be added as they become available.
-
-## Related Projects and References
-
-- [Best README Template](https://github.com/othneildrew/Best-README-Template) — reference template for project documentation.
-- Additional related project links can be added as needed.
+Project requirements, design documents, and other technical documentation are maintained in the [GitHub repository](https://github.com/SammyajitDatta/ECE444-Project). Links to specific documents can be added as they become available. For README formatting conventions, see the [Best README Template](https://github.com/othneildrew/Best-README-Template).
 
 ## CI/CD Status
 
