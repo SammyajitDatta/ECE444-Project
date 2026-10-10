@@ -1,163 +1,141 @@
 # ApplyPilot
 
-**ECE444 Software Engineering — Team Blue**
+**ECE444 Software Engineering | Team Blue**
 
-ApplyPilot is a web application project designed to simplify the job application process. Its goal is to help job seekers maintain a reusable master profile, create job-specific resumes, manage applications, and prepare for interviews from one platform.
+ApplyPilot is a web application designed to simplify the job search process. It brings resume customization, job-application management, and interview preparation into one platform so job seekers can spend less time on repetitive administrative work.
 
-> **Development status:** Sprint 1 completed. The team implemented initial versions of two main features: Tailored Resume Generation and Application View. Resume generation is functional, although the formatting, spacing, and alignment of generated templates require further refinement. The Application View includes database models for users, jobs, and applications, along with CRUD APIs. Further integration and improvements are planned.
+## Project Description and Purpose
 
-## Project Overview
+Job seekers often maintain multiple versions of their resumes, manually record application progress, and prepare separately for interviews. ApplyPilot aims to streamline these activities through a reusable master resume, tailored resume generation, and a central application view.
 
-Applying for jobs can involve repeatedly updating resumes, tracking applications across multiple platforms, and preparing for different interviews. ApplyPilot aims to bring these activities into a single workflow.
-
-### Features and Development Status
+### Features
 
 | Feature | Description | Status |
 | --- | --- | --- |
-| Master resume and parser | Upload or manually enter resume information and parse a master resume for generation. | Implemented in Sprint 1 |
-| Tailored resume generation | Generate a resume based on master-resume information, a job description, and a selected template. | Functional in Sprint 1; formatting needs improvement |
-| Resume templates | Choose from three resume templates. | Implemented in Sprint 1; visual refinement needed |
-| Resume preview and export | Preview the generated PDF and download it. | Prototype implemented |
-| Application View | View and manage job-application information. | Implemented in Sprint 1 |
-| Application database models | Represent users, jobs, and applications. | Implemented in Sprint 1 |
-| Jobs and applications CRUD APIs | Create, read, update, and delete job and application records. | Implemented in Sprint 1 |
-| Expanded application tracking | Track applications and their current stages across the full integrated platform. | Further integration planned |
-| Email-assisted status updates | Use relevant emails to help update application status. | Planned |
-| Interview practice | Prepare for interviews using a question pool. | Planned |
-| Recruiter outreach | Draft personalized outreach messages. | Planned |
-| Resume explanation sidebar | Explain choices made when tailoring resume content. | Planned |
-| Application analytics | Summarize application activity and progress. | Planned |
+| Master resume parser | Accept and process information from a master resume. | Implemented |
+| Tailored resume generation | Produce a resume based on master-resume information, a job description, and a selected template. | In Progress |
+| Resume templates | Offer three selectable resume layouts. | In Progress |
+| PDF preview and export | Preview and download the generated resume. | Implemented |
+| Application View | Display and manage job-application information. | Implemented |
+| Database models | Model users, jobs, and applications. | Implemented |
+| Jobs and applications CRUD APIs | Create, read, update, and delete jobs and applications. | Implemented |
+| Full application integration | Connect the application's frontend, APIs, and data persistence into one workflow. | Planned |
+| Email-assisted status updates | Help update application statuses from relevant emails. | Planned |
+| Interview practice | Provide interview preparation questions and exercises. | Planned |
+| Recruiter outreach drafts | Help create personalized recruiter outreach messages. | Planned |
+| Resume explanation sidebar | Explain decisions made while tailoring a resume. | Planned |
+| Application analytics | Summarize application activity and outcomes. | Planned |
 
-## Sprint 1 Implementation
-
-### Sammyajit Datta — Tailored Resume Generation
-
-Sprint 1 work included implementing tailored resume generation, developing the master resume parser, and selecting three resume templates. The main workflow is functional: users can generate resumes using information from their master resumes. The resulting templates still need improvements to spacing, alignment, and overall presentation. Usability testing, unit testing, and teammate code reviews were conducted. Further template refinement is planned.
-
-### Subat Ahsan — Application View
-
-Sprint 1 work included implementing the Application View, creating database models for users, jobs, and applications, and developing CRUD APIs to manage jobs and job applications. These components provide a foundation for application management and tracking. Usability testing, unit testing, and teammate code reviews were conducted. Further feature integration and improvements are planned.
-
-### Resume-Generation Prototype Workflow
-
-1. Upload a master resume PDF **or** manually enter resume information.
-2. Select one of three resume templates (Template 1 is the default).
-3. Provide a job description by uploading an HTML file **or** pasting the description into a text field.
-4. Generate a tailored resume draft.
-5. Preview the PDF within the webpage and download it if desired.
-
-The job-description inputs are mutually exclusive, and generation requires both master-resume content and a job description.
-
-**Known limitation:** The current PDF generation flow needs additional polishing, particularly spacing, alignment, and template layout consistency. The current prototype should not be treated as a production-ready AI resume-tailoring service.
+**Known limitation:** Resume generation works, but the generated templates need improved spacing, alignment, and overall formatting. These refinements are why tailored generation and templates are marked **In Progress** rather than complete.
 
 ## Prerequisites
 
-- A modern web browser (for example, Chrome, Firefox, or Edge).
-- Git (recommended for obtaining the project and collaborating).
-- A code editor (Visual Studio Code recommended).
+- [Node.js and npm](https://nodejs.org/) (a version compatible with the project's `package.json`).
+- [Git](https://git-scm.com/) to clone the repository and switch branches.
+- A modern web browser.
+- A code editor, such as Visual Studio Code.
 
-The **standalone resume-generation prototype** uses HTML, CSS, and JavaScript and can be run in a browser without an API key. However, the broader ApplyPilot project also includes Subat’s Application View, database models, and CRUD APIs. Backend dependencies and setup requirements must be documented once their exact framework, database, and commands are confirmed.
+## Required Tooling and Technology Stack
 
-## Required and Suggested Tools
+| Technology or Tool | Purpose |
+| --- | --- |
+| [React](https://react.dev/) | Frontend user interface, including the resume-generation feature. |
+| JavaScript and JSX | React components and application behavior. |
+| HTML and CSS | Browser page structure and application styling. React typically renders HTML through JSX; CSS handles layout and presentation. |
+| [Node.js](https://nodejs.org/) and npm | Run the frontend development tooling and install project dependencies. Node.js is not being identified here as the application's backend framework. |
+| Git and GitHub | Source control, collaboration, and project management. |
+| Database models and CRUD APIs | Backend functionality used by the Application View; these are application components, **not React tooling**. The backend framework and database technology have not yet been confirmed. |
 
-| Tool | Purpose | Required? |
-| --- | --- | --- |
-| HTML, CSS, JavaScript | Resume-generation frontend prototype | Yes, for that prototype |
-| Database and backend API technologies | Application View models and CRUD APIs | Used in Sprint 1; specific technologies to be confirmed |
-| React | Add here only if used in the integrated app or a teammate’s implementation | Not yet verified |
-| Web browser | Run and test the prototype | Yes |
-| Git | Version control and collaboration | Recommended |
-| [Visual Studio Code](https://code.visualstudio.com/) | Editing and debugging | Suggested |
-| [GitHub](https://github.com/) | Source hosting, reviews, and issue tracking | For team collaboration |
-| Browser developer tools | Diagnose console errors and layout problems | Suggested |
+React does **not** replace HTML, CSS, or JavaScript. You generally write React components in JavaScript/JSX, style them with CSS, and the browser ultimately displays HTML. The separate Application View backend uses database models and CRUD APIs, which should be documented further once its technology stack and setup commands are confirmed.
+
+### Suggested Tooling
+
+- [Visual Studio Code](https://code.visualstudio.com/) for development.
+- [React Developer Tools](https://react.dev/learn/react-developer-tools) and browser developer tools for debugging.
+- [GitHub Desktop](https://desktop.github.com/) as an optional Git interface.
 
 ## Getting Started
 
-Clone the repository:
+### Run Tailored Resume Generation
+
+The tailored resume-generation frontend is available on the `resume-generation` branch.
 
 ```bash
 git clone https://github.com/SammyajitDatta/ECE444-Project.git
 cd ECE444-Project
+git switch resume-generation
+npm install
+npm run dev
 ```
 
-For the **resume-generation frontend**, locate the folder containing its HTML prototype and open the entry-point HTML file (typically `index.html`) in a browser. Alternatively, use VS Code’s Live Server extension to serve that folder locally.
+Open the local URL displayed in the terminal after `npm run dev` starts (commonly `http://localhost:5173/`, but use the URL shown by your development server).
 
-For the **Application View backend and database**, follow the setup instructions in its feature directory, if available. The exact package installation, database configuration, and backend startup commands need to be confirmed and added here before a new contributor can run the complete integrated application.
+If `package.json` is within a subdirectory rather than the branch root, navigate into that directory **before** running `npm install` and `npm run dev`.
 
-**Note:** The exact entry-point path may vary by branch as the team integrates features. Check the current branch's directory structure before running the app.
+From the running interface, users can provide master-resume content and a job description, choose a resume template, and generate and preview a tailored PDF.
 
-No package installation or build command is needed for the **standalone static resume-generation prototype**. This statement does not apply to the Application View backend or database.
+### Application View
 
-## Running and Testing Locally
+The Application View includes models for users, jobs, and applications, as well as CRUD APIs for jobs and applications. Its backend framework, database, and launch commands have not been confirmed for this README; setup instructions will be added once those details are available.
 
-### Resume-generation testing
+## Build and Run Instructions
 
-Run the HTML entry point in a browser and verify the core workflow:
+To **run the resume-generation frontend locally for development**, use `npm install` followed by `npm run dev`, as shown above. Do not open `index.html` directly or use VS Code Live Server as the recommended setup for the React project.
 
-1. Enter master-resume information or upload a supported PDF.
-2. Select a template.
-3. Supply a job description using exactly one input method.
-4. Generate the resume and check that an embedded PDF preview appears.
-5. Download the file and review its formatting.
-6. Confirm that generation is unavailable when required information is missing.
+A separate production build command and deployment procedure have not yet been verified. `npm run dev` starts the development server; it is not a production build.
 
-### Application View testing
+## Testing
 
-Verify the Application View and its data operations, including creating, retrieving, updating, and deleting job/application records after the backend and database have been configured. Specific test commands and setup details still need to be documented.
+The team has performed unit testing, usability testing, and teammate code reviews while developing the features. **The automated test suite and instructions to run it are not publicly available yet.** Therefore, no public test command or test-report link is provided at this time.
 
-### Testing status
+Once tests are made available in the repository, this section will document their prerequisites and exact commands. Contributors can currently review the user-facing functionality manually after starting the development server, but manual checks are not a substitute for the unpublished tests.
 
-Both team members carried out **unit testing, usability testing, and teammate code review sessions during Sprint 1**. Unit testing checked individual components, usability testing evaluated whether features were useful and intuitive, and code reviews helped identify logical errors and inconsistencies. The exact test framework and automated execution command have not yet been recorded in this README; add verified commands when available. Further integration testing is planned as features are combined.
+## Local Deployment
 
-## Project Management and Collaboration Tools
+The resume-generation feature runs locally using `npm run dev` in the `resume-generation` branch after dependencies have been installed. This is a **development environment**, not a production deployment. Instructions for running the integrated application and deploying to production have not yet been published.
 
-Milestone 3 requires the team to list its project-management tools and their public URLs. The project currently uses the following GitHub resources:
+## Project Management Tools
 
-| Resource | Purpose | URL |
+| Tool or Resource | Purpose | Link |
 | --- | --- | --- |
-| GitHub repository | Source code and project documentation | [ECE444-Project](https://github.com/SammyajitDatta/ECE444-Project) |
-| GitHub Issues | Track tasks, bugs, and user stories | [Issues](https://github.com/SammyajitDatta/ECE444-Project/issues) |
-| GitHub Pull Requests | Review and integrate changes | [Pull requests](https://github.com/SammyajitDatta/ECE444-Project/pulls) |
-| GitHub Projects | Sprint/backlog organization, **if configured** | [Repository Projects](https://github.com/SammyajitDatta/ECE444-Project/projects) |
+| GitHub Repository | Source code and project documentation | [ECE444-Project](https://github.com/SammyajitDatta/ECE444-Project) |
+| GitHub Issues | Tasks, bugs, and user stories | [Issues](https://github.com/SammyajitDatta/ECE444-Project/issues) |
+| GitHub Pull Requests | Code reviews and merging changes | [Pull Requests](https://github.com/SammyajitDatta/ECE444-Project/pulls) |
+| GitHub Projects | Backlog and task planning, if configured | [Repository Projects](https://github.com/SammyajitDatta/ECE444-Project/projects) |
 
-If the team uses a separate GitHub Project board or another planning tool, add its **actual board URL** here. Do not substitute the generic repository Projects page for a specific board unless that is what the team uses.
+If a separate GitHub Projects board or another project-management tool is being used, replace or supplement the links above with the specific public board URL.
+
+## Team Standards and Collaboration
+
+- Develop features on separate branches, and use pull requests for review before merging into `main`.
+- Use descriptive commit messages and pull-request summaries.
+- Perform teammate code reviews and discuss logic errors or integration issues.
+- Follow readable, consistent code formatting and document major changes.
+- Test features before merging, and do not commit credentials or API keys.
+- Keep this README updated when the project's tools or setup steps change.
+
+For further collaboration rules, see [CONTRIBUTING.md](CONTRIBUTING.md) when added. For conduct expectations, see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) when added.
 
 ## Team Members
 
-| Team member | Project responsibilities |
+| Team Member | Primary Responsibilities |
 | --- | --- |
-| Sammyajit Datta | Tailored Resume Generation, master resume parser, three resume templates, testing, code review, and project management |
-| Subat Ahsan | Application View, database models for users/jobs/applications, CRUD APIs, testing, code review, and UI/UX |
-
-## Development Standards
-
-- Keep work in feature branches rather than making unrelated changes directly on `main`.
-- Use descriptive commit messages and meaningful pull-request descriptions.
-- Review each other's code before merging, especially where features integrate.
-- Keep code readable and consistently formatted.
-- Add or update tests when introducing functionality, once the automated test structure is established.
-- Update documentation when setup steps, dependencies, or behavior change.
-- Do not commit API keys, passwords, or other secrets.
+| Sammyajit Datta | Tailored resume generation, master resume parsing, resume templates, project management, testing, and code review. |
+| Subat Ahsan | Application View, database models, CRUD APIs, UI/UX, testing, and code review. |
 
 ## Project Documentation
 
-- [Repository](https://github.com/SammyajitDatta/ECE444-Project)
-- Requirements, sprint reports, and design artifacts: refer to documentation committed in this repository as it becomes available.
+Project requirements, design documents, and other technical documentation are maintained in the [GitHub repository](https://github.com/SammyajitDatta/ECE444-Project). Links to specific documents can be added as they become available.
 
-## Related Projects
+## Related Projects and References
 
-No separate related-project repository is required to run the current ApplyPilot prototype. Links to future dependencies or companion services can be added here.
-
-## Deployment
-
-**Local (resume-generation prototype):** Open its HTML entry point in a browser or serve it using a local static-file server. **Application View:** Database/backend setup and launch instructions are pending verification. Full-app deployment instructions will be added as integration proceeds.
-
-**Production:** A hosted deployment and production deployment instructions have not yet been established.
+- [Best README Template](https://github.com/othneildrew/Best-README-Template) — reference template for project documentation.
+- Additional related project links can be added as needed.
 
 ## CI/CD Status
 
-No verified automated build, test, or deployment pipeline is documented here yet. Once configured, add a link to the GitHub Actions workflow and its status badge.
+No publicly verified automated build, test, or deployment workflow has been documented yet. When CI/CD is configured, this section will link to the workflow and its build/deployment status.
 
 ---
 
-*This README will be updated throughout development as features, tests, dependencies, and deployment practices are finalized.*
+*This README is intended to help new contributors understand, run, test, and contribute to ApplyPilot. It should be updated as the project evolves.*
