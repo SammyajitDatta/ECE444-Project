@@ -1,5 +1,6 @@
 import PreparationPanel from "../components/PreparationPanel";
 import CompanyPreparationPage from "./CompanyPreparationPage";
+import RecruiterOutreachPage from "./RecruiterOutreachPage";
 import { useEffect, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -55,13 +56,15 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function ApplicationDetailPage({ preparation = false }: { preparation?: boolean }) {
+type ApplicationView = "details" | "preparation" | "outreach";
+
+export default function ApplicationDetailPage({ view = "details" }: { view?: ApplicationView }) {
   const { id } = useParams<{ id: string }>();
   if (!id || !Number.isInteger(Number(id)) || Number(id) < 1) return <main className="welcome"><h1>Invalid application link</h1><Link to="/">Return to applications</Link></main>;
-  return <ApplicationDetail key={id} id={id} preparation={preparation} />;
+  return <ApplicationDetail key={id} id={id} view={view} />;
 }
 
-function ApplicationDetail({ id, preparation }: { id: string; preparation: boolean }) {
+function ApplicationDetail({ id, view }: { id: string; view: ApplicationView }) {
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,8 +85,11 @@ function ApplicationDetail({ id, preparation }: { id: string; preparation: boole
     return () => controller.abort();
   }, [id]);
 
-  if (preparation && application) {
+  if (view === "preparation" && application) {
     return <CompanyPreparationPage application={application} />;
+  }
+  if (view === "outreach" && application) {
+    return <RecruiterOutreachPage application={application} />;
   }
 
   const back = (
@@ -126,9 +132,14 @@ function ApplicationDetail({ id, preparation }: { id: string; preparation: boole
           </div>
         </div>
 
-        <Link className="primary" to={`/applications/${application.id}/preparation`}>
-          Open company &amp; role prep
-        </Link>
+        <div className="outreach-actions">
+          <Link className="primary" to={`/applications/${application.id}/preparation`}>
+            Open company &amp; role prep
+          </Link>
+          <Link className="primary" to={`/applications/${application.id}/outreach`}>
+            Draft recruiter email
+          </Link>
+        </div>
         <PreparationPanel key={`interview-${application.id}-${application.status}`} applicationId={application.id} kind="interview" enabled={application.status === "interviewing"} />
         {job.required_skills.length > 0 && <Section title="Required skills"><Chips items={job.required_skills} /></Section>}
         {job.preferred_skills.length > 0 && <Section title="Preferred skills"><Chips items={job.preferred_skills} /></Section>}

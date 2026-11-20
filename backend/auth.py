@@ -26,7 +26,7 @@ def install_auth(app):
     token = session.get('login_token')
     if token:
       record = db.session.get(LoginSession, hashlib.sha256(token.encode()).hexdigest())
-      if record and record.expires_at > datetime.now(timezone.utc).replace(tzinfo=None):
+      if record and record.expires_at > datetime.now(timezone.utc):
         g.user = db.session.get(User, record.user_id)
     public = {'/api/auth/me', '/api/auth/google', '/api/auth/callback'}
     if request.path not in public and not g.user:
@@ -71,7 +71,7 @@ def callback():
       # Never silently claim a pre-existing local account just because its email matches.
       if db.session.scalar(select(User).where(User.email == info['email'])):
         return redirect(current_app.config['PUBLIC_ORIGIN'] + '/?auth_error=account_conflict')
-      user = User(email=info['email'], name=info.get('name') or info['email'])
+      user = User(email=info['email'], name=(info.get('name') or info['email'])[:120])
       db.session.add(user)
       db.session.flush()
       db.session.add(GoogleIdentity(subject=info['sub'], user_id=user.id))

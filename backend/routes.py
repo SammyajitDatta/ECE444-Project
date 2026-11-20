@@ -238,6 +238,14 @@ def create_application() -> Response:
     if len(title) > 200 or len(company_name) > 200:
         raise ApiError("Title and company must be at most 200 characters")
 
+    salary_low = request.form.get("salary_low")
+    salary_high = request.form.get("salary_high")
+    about = request.form.get("about")
+    if any(value is not None and len(value) > 50 for value in (salary_low, salary_high)):
+        raise ApiError("Salary values must be at most 50 characters")
+    if any("\x00" in value for value in (title, company_name, salary_low or "", salary_high or "", about or "")):
+        raise ApiError("Job details cannot contain null characters")
+
     required_skills = json_list_field("required_skills")
     preferred_skills = json_list_field("preferred_skills")
     perks = json_list_field("perks")
@@ -279,12 +287,12 @@ def create_application() -> Response:
         title=title,
         company_name=company_name,
         job_type=raw_job_type,
-        salary_low=request.form.get("salary_low"),
-        salary_high=request.form.get("salary_high"),
+        salary_low=salary_low,
+        salary_high=salary_high,
         required_skills=required_skills,
         preferred_skills=preferred_skills,
         perks=perks,
-        about=request.form.get("about"),
+        about=about,
     )
 
     db.session.add(job)

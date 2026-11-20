@@ -4,6 +4,8 @@ from __future__ import annotations
 import random
 from datetime import date, timedelta
 
+from sqlalchemy import select
+
 from app import create_app
 from models import Application, ApplicationStatus, Job, JobType, User, db
 
@@ -13,16 +15,18 @@ TITLES = ["Frontend Developer", "Backend Engineer", "Data Analyst", "Product Des
           "QA Engineer", "DevOps Engineer", "Full Stack Developer", "ML Engineer", "Support Engineer"]
 SKILLS = ["Python", "TypeScript", "React", "SQL", "Flask", "Docker", "AWS", "Git", "Figma", "Pandas"]
 PERKS = ["Remote friendly", "Dental", "Stock options", "4-day week", "Learning budget", "Gym stipend"]
+DEMO_EMAIL = "you@example.com"
 
 
 def main() -> None:
     rng = random.Random(7)
     app = create_app()
     with app.app_context():
-        db.drop_all()
-        db.create_all()
+        if db.session.scalar(select(User.id).where(User.email == DEMO_EMAIL)) is not None:
+            print("The demo user already exists. Skipped seeding.")
+            return
 
-        user = User(email="you@example.com", name="Sam Rivera")
+        user = User(email=DEMO_EMAIL, name="Sam Rivera")
         db.session.add(user)
         db.session.flush()
 

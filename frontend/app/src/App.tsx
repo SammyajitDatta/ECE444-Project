@@ -44,7 +44,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<ApplicationsPage />} />
         <Route path="/applications/:id" element={<ApplicationDetailPage />} />
-        <Route path="/applications/:id/preparation" element={<ApplicationDetailPage preparation />} />
+        <Route path="/applications/:id/preparation" element={<ApplicationDetailPage view="preparation" />} />
+        <Route path="/applications/:id/outreach" element={<ApplicationDetailPage view="outreach" />} />
         <Route path="/create" element={<CreateApplicationPage />} />
         <Route path="/resume" element={<div className="resume-workspace"><Suspense fallback={<p role="status">Loading resume studio…</p>}><ResumePage /></Suspense></div>} />
         <Route path="*" element={<main className="welcome"><h1>Page not found</h1><NavLink to="/">Return to applications</NavLink></main>} />

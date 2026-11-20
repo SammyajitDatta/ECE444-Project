@@ -6,3 +6,7 @@
 .prep-result-group { border-top: 1px solid var(--line); margin-top: 20px; }
 .prep-excerpt + .prep-excerpt { margin-top: 20px; }
 .prep-excerpt { overflow-wrap: anywhere; }
+
+.outreach-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 0 16px; }
+.outreach-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.outreach-actions button, .outreach-actions a { min-height: 42px; }

@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateMaster, countWords, MAX_MASTER_CHARS, MAX_JOB_CHARS } from './lib/validation.mjs';
-import { transcribePDF, tailorResume, getActiveModel, rankResearchExcerpts } from './lib/gemini.mjs';
+import { draftOutreachParagraph, transcribePDF, tailorResume, getActiveModel, rankResearchExcerpts } from './lib/gemini.mjs';
 import { extractPdfLinks } from './lib/pdf-links.mjs';
 import { organizeMasterText } from '../shared/resume-links.mjs';
 
@@ -45,6 +45,21 @@ app.post('/api/research/rank', async (req, res) => {
     res.json({ indices });
   } catch {
     res.status(503).json({ error: 'Gemini excerpt ranking is unavailable.' });
+  }
+});
+
+app.post('/api/outreach/draft', async (req, res, next) => {
+  const { company, role, description, background } = req.body ?? {};
+  const fits = (value, max) => typeof value === 'string' && Array.from(value).length <= max;
+  if (!fits(company, 200) || !company.trim() || !fits(role, 200) || !role.trim() ||
+    !fits(description, MAX_JOB_CHARS) || !description.trim() || !fits(background, 800)) {
+    return res.status(400).json({ error: 'Invalid outreach details.' });
+  }
+  try {
+    const paragraph = await draftOutreachParagraph({ company, role, description, background });
+    res.json({ paragraph });
+  } catch (error) {
+    next(error);
   }
 });
 

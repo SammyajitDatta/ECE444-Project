@@ -8,12 +8,13 @@ from typing import Any
 
 from flask import Flask
 
+from database import postgres_url
 from models import db
 from routes import bp, ApiError, handle_api_error
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR.parent / '.env')
+load_dotenv(BASE_DIR / '.env')
 
 
 def create_app(test_config: dict[str, Any] | None = None) -> Flask:
@@ -26,7 +27,8 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE='Lax',
         SESSION_COOKIE_SECURE=os.environ.get('PUBLIC_ORIGIN', '').startswith('https://'),
-        SQLALCHEMY_DATABASE_URI=f"sqlite:///{BASE_DIR / 'data' / 'jobtracker.db'}",
+        SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL'),
+        SQLALCHEMY_ENGINE_OPTIONS={'pool_pre_ping': True},
         UPLOAD_FOLDER=str(BASE_DIR / "uploads"),  # the "storage bucket"
         MAX_CONTENT_LENGTH=10 * 1024 * 1024,
     )
@@ -35,8 +37,8 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     if test_config:
         app.config.update(test_config)
 
+    app.config['SQLALCHEMY_DATABASE_URI'] = postgres_url(app.config['SQLALCHEMY_DATABASE_URI'])
     Path(app.config["UPLOAD_FOLDER"]).mkdir(parents=True, exist_ok=True)
-    (BASE_DIR / "data").mkdir(exist_ok=True)
 
     db.init_app(app)
     from auth import install_auth
@@ -49,6 +51,8 @@ def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     app.register_blueprint(research)
     from interview import interview
     app.register_blueprint(interview)
+    from outreach import outreach
+    app.register_blueprint(outreach)
     from resume_proxy import resume_proxy
     app.register_blueprint(resume_proxy)
 

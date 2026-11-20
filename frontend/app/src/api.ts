@@ -65,3 +65,21 @@ export async function fetchApplication(id: number, signal?: AbortSignal): Promis
 export function fileUrl(applicationId: number, kind: FileKind): string {
   return `/api/applications/${applicationId}/files/${kind}`;
 }
+
+export type OutreachDraft = { subject: string; body: string };
+
+export async function generateOutreachDraft(
+  applicationId: number,
+  details: { recruiter_name: string; background: string; description?: string },
+): Promise<OutreachDraft> {
+  const response = await apiFetch(`/api/applications/${applicationId}/outreach`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(details),
+  });
+  if (!response.ok) {
+    const data: { error?: string } = await response.json().catch(() => ({}));
+    throw new Error(data.error ?? "Could not generate the outreach draft.");
+  }
+  return response.json();
+}
