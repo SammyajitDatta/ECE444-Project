@@ -149,9 +149,8 @@ export default function CreateApplicationPage() {
       if (coverLetter) formData.append("cover_letter", coverLetter);
       if (transcript) formData.append("transcript", transcript);
 
-      await createApplication(formData);
-
-      navigate("/");
+      const application = await createApplication(formData);
+      navigate(`/applications/${application.id}`);
     } catch (err) {
       setError(
         err instanceof Error

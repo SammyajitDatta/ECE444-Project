@@ -1,4 +1,5 @@
 import PreparationPanel from "../components/PreparationPanel";
+import CompanyPreparationPage from "./CompanyPreparationPage";
 import { useEffect, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -54,13 +55,13 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function ApplicationDetailPage() {
+export default function ApplicationDetailPage({ preparation = false }: { preparation?: boolean }) {
   const { id } = useParams<{ id: string }>();
   if (!id || !Number.isInteger(Number(id)) || Number(id) < 1) return <main className="welcome"><h1>Invalid application link</h1><Link to="/">Return to applications</Link></main>;
-  return <ApplicationDetail key={id} id={id}/>;
+  return <ApplicationDetail key={id} id={id} preparation={preparation} />;
 }
 
-function ApplicationDetail({ id }: { id: string }) {
+function ApplicationDetail({ id, preparation }: { id: string; preparation: boolean }) {
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +82,10 @@ function ApplicationDetail({ id }: { id: string }) {
     return () => controller.abort();
   }, [id]);
 
+  if (preparation && application) {
+    return <CompanyPreparationPage application={application} />;
+  }
+
   const back = (
     <Link to="/" style={{ display: "inline-block", marginBottom: 24, color: colors.ink, fontWeight: 500, textDecoration: "none" }}>
       ← Back to applications
@@ -95,7 +100,7 @@ function ApplicationDetail({ id }: { id: string }) {
   } else {
     const { job, status } = application;
     const color = statusColors[status];
-    const salary = job.salary_low ? (job.salary_high ? `${job.salary_low} – ${job.salary_high}` : job.salary_low) : null;
+    const salary = [job.salary_low, job.salary_high].filter(Boolean).join(" – ");
 
     const documents: { kind: FileKind; label: string; path: string | null }[] = [
       { kind: "resume", label: "Resume", path: application.resume_path },
@@ -121,10 +126,10 @@ function ApplicationDetail({ id }: { id: string }) {
           </div>
         </div>
 
-        <div className="prep-grid">
-          <PreparationPanel key={`research-${application.id}`} applicationId={application.id} />
-          <PreparationPanel key={`interview-${application.id}-${application.status}`} applicationId={application.id} kind="interview" enabled={application.status === "interviewing"} />
-        </div>
+        <Link className="primary" to={`/applications/${application.id}/preparation`}>
+          Open company &amp; role prep
+        </Link>
+        <PreparationPanel key={`interview-${application.id}-${application.status}`} applicationId={application.id} kind="interview" enabled={application.status === "interviewing"} />
         {job.required_skills.length > 0 && <Section title="Required skills"><Chips items={job.required_skills} /></Section>}
         {job.preferred_skills.length > 0 && <Section title="Preferred skills"><Chips items={job.preferred_skills} /></Section>}
         {job.perks.length > 0 && <Section title="Perks"><Chips items={job.perks} /></Section>}

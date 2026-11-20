@@ -43,20 +43,24 @@ def _postings(value):
       yield value
     yield from _postings(value.get('@graph', []))
 
+
+def find_structured_job(data):
+  soup = BeautifulSoup(data, 'html.parser')
+  for script in soup.find_all('script', type='application/ld+json'):
+    try:
+      posting = next(_postings(json.loads(script.string or script.get_text())), None)
+    except (ValueError, TypeError):
+      continue
+    if posting:
+      return posting
+  return None
+
+
 def parse_job(data, kind):
   text = content_text(data, kind)
   result = {'title': '', 'company_name': '', 'about': text, 'job_type': '',
     'required_skills': [], 'preferred_skills': [], 'perks': [], 'salary_low': '', 'salary_high': ''}
-  structured = None
-  if kind in ('text/html', 'application/xhtml+xml'):
-    soup = BeautifulSoup(data, 'html.parser')
-    for script in soup.find_all('script', type='application/ld+json'):
-      try:
-        structured = next(_postings(json.loads(script.string or script.get_text())), None)
-      except (ValueError, TypeError):
-        continue
-      if structured:
-        break
+  structured = find_structured_job(data) if kind in ('text/html', 'application/xhtml+xml') else None
   if structured:
     org = structured.get('hiringOrganization', {})
     result['title'] = str(structured.get('title', ''))[:200]

@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateMaster, countWords, MAX_MASTER_CHARS, MAX_JOB_CHARS } from './lib/validation.mjs';
-import { transcribePDF, tailorResume, getActiveModel } from './lib/gemini.mjs';
+import { transcribePDF, tailorResume, getActiveModel, rankResearchExcerpts } from './lib/gemini.mjs';
 import { extractPdfLinks } from './lib/pdf-links.mjs';
 import { organizeMasterText } from '../shared/resume-links.mjs';
 
@@ -31,6 +31,22 @@ const upload = multer({
 });
 
 app.get('/api/health', (_req, res) => res.json({ ok: true, model: getActiveModel(), geminiConfigured: !!process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'replace_with_your_new_key' }));
+
+app.post('/api/research/rank', async (req, res) => {
+  const { company, role, excerpts } = req.body ?? {};
+  const validLabel = (value) => typeof value === 'string' && value.trim() && value.length <= 200;
+  if (!validLabel(company) || !validLabel(role) || !Array.isArray(excerpts) ||
+    excerpts.length < 1 || excerpts.length > 24 ||
+    !excerpts.every((excerpt) => typeof excerpt === 'string' && excerpt.length <= 1200)) {
+    return res.status(400).json({ error: 'Invalid research excerpts.' });
+  }
+  try {
+    const indices = await rankResearchExcerpts(company, role, excerpts);
+    res.json({ indices });
+  } catch {
+    res.status(503).json({ error: 'Gemini excerpt ranking is unavailable.' });
+  }
+});
 
 app.post('/api/parse-resume', upload.single('file'), async (req, res, next) => {
   try {
