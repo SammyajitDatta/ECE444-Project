@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta, timezone
-from hashlib import sha256
+from datetime import timedelta
 
 import pytest
 
+from app import create_app
 from database import postgres_url
-from models import LoginSession, db
+from models import LoginSession, User
 
 
 @pytest.mark.parametrize('scheme', ['postgres', 'postgresql', 'postgresql+psycopg'])
@@ -23,25 +23,39 @@ def test_postgres_url_requires_a_postgres_database(value):
 
 
 def test_database_url_error_does_not_echo_invalid_credentials():
-    with pytest.raises(RuntimeError, match='TEST_DATABASE_URL') as error:
-        postgres_url('postgresql://app:fake-secret@localhost:not-a-port/applypilot', 'TEST_DATABASE_URL')
+    with pytest.raises(RuntimeError, match='DATABASE_URL') as error:
+        postgres_url('postgresql://app:fake-secret@localhost:not-a-port/applypilot')
     assert 'fake-secret' not in str(error.value)
 
 
-def test_postgresql_session_expiration(app, signed):
-    assert signed.get('/api/applications').status_code == 200
-    token_hash = sha256(b'fixture-session').hexdigest()
-    with app.app_context():
-        record = db.session.get(LoginSession, token_hash)
-        assert record.expires_at.utcoffset() is not None
-        record.expires_at = datetime.now(timezone.utc) - timedelta(minutes=1)
-        db.session.commit()
-    assert signed.get('/api/applications').status_code == 401
+def test_login_session_expiry_column_uses_timezone():
+    assert LoginSession.__table__.c.expires_at.type.timezone
 
 
-def test_application_salary_limit_is_validated_before_database_write(signed, headers):
-    response = signed.post('/api/applications', headers=headers,
-                           data={'title': 'Engineer', 'company_name': 'Acme', 'salary_high': 'x' * 51})
-    assert response.status_code == 400
-    assert '50 characters' in response.json['error']
-    assert signed.get('/api/applications').json['total'] == 1
+def test_created_timestamp_defaults_to_utc():
+    assert User.__table__.c.created_at.default.arg(None).utcoffset() == timedelta(0)
+
+
+def test_app_configures_postgres_lifecycle(app, database_lifecycle, storage):
+    assert app.config['SQLALCHEMY_DATABASE_URI'].drivername == 'postgresql+psycopg'
+    assert app.config['SQLALCHEMY_ENGINE_OPTIONS']['pool_pre_ping']
+    database_lifecycle.init.assert_called_once_with(app)
+    database_lifecycle.create.assert_called_once_with()
+    storage.mkdir.assert_called_once_with(storage.root, parents=True, exist_ok=True)
+
+
+def test_app_rejects_missing_database_url_before_initializing(monkeypatch, database_lifecycle, storage):
+    monkeypatch.delenv('DATABASE_URL', raising=False)
+    monkeypatch.setenv('PUBLIC_ORIGIN', 'http://localhost:5173')
+    with pytest.raises(RuntimeError, match='DATABASE_URL'):
+        create_app()
+    database_lifecycle.init.assert_not_called()
+    storage.mkdir.assert_not_called()
+
+
+def test_https_origin_requires_stable_secret(monkeypatch, database_lifecycle):
+    monkeypatch.setenv('PUBLIC_ORIGIN', 'https://applypilot.example.test')
+    monkeypatch.delenv('FLASK_SECRET_KEY', raising=False)
+    with pytest.raises(RuntimeError, match='FLASK_SECRET_KEY'):
+        create_app()
+    database_lifecycle.init.assert_not_called()

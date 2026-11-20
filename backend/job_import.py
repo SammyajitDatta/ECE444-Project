@@ -7,6 +7,7 @@ from flask import Blueprint, jsonify, request
 from public_web import SourceError, fetch_public
 
 job_import = Blueprint('job_import', __name__, url_prefix='/api')
+MAX_JOB_UPLOAD_BYTES = 2 * 1024 * 1024
 
 def visible_text(html):
   soup = BeautifulSoup(html, 'html.parser')
@@ -70,7 +71,8 @@ def parse_job(data, kind):
       result['about'] = visible_text(description)[:20000]
     employment = structured.get('employmentType', '')
     if isinstance(employment, list): employment = employment[0] if employment else ''
-    result['job_type'] = {'FULL_TIME':'full_time','PART_TIME':'part_time','CONTRACTOR':'contract','INTERN':'internship','TEMPORARY':'temporary'}.get(employment, '')
+    if isinstance(employment, str):
+      result['job_type'] = {'FULL_TIME':'full_time','PART_TIME':'part_time','CONTRACTOR':'contract','INTERN':'internship','TEMPORARY':'temporary'}.get(employment, '')
     salary = structured.get('baseSalary', {})
     value = salary.get('value', {}) if isinstance(salary, dict) else {}
     if isinstance(value, dict):
@@ -99,8 +101,8 @@ def import_job():
       name = file.filename.lower()
       kind = 'application/pdf' if name.endswith('.pdf') else 'text/html' if name.endswith(('.html', '.htm')) else 'text/plain' if name.endswith('.txt') else ''
       if not kind: raise SourceError('Upload a PDF, HTML or TXT file.')
-      data = file.read(2 * 1024 * 1024 + 1)
-      if len(data) > 2 * 1024 * 1024: raise SourceError('Job file must be 2 MB or smaller.')
+      data = file.read(MAX_JOB_UPLOAD_BYTES + 1)
+      if len(data) > MAX_JOB_UPLOAD_BYTES: raise SourceError('Job file must be 2 MB or smaller.')
     result = parse_job(data, kind)
     return jsonify(job=result, source_url=source, note='Review all fields before saving. Missing fields were left blank; extracted salary values use the source units.')
   except SourceError as exc:

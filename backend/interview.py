@@ -1,7 +1,7 @@
 import re
 from flask import Blueprint, jsonify, request
 from models import ApplicationStatus
-from research import collect, sentences
+from research import collect, name_pattern, sentences
 from routes import _get_own_application
 
 interview = Blueprint('interview', __name__, url_prefix='/api')
@@ -13,9 +13,11 @@ def reported_questions(text, company, role):
   This can miss valid reports; unsupported questions are worse than an empty result.
   """
   result = []
+  company_pattern = name_pattern(company)
+  role_pattern = name_pattern(role)
   for sentence in sentences(text):
     low = sentence.casefold()
-    if company.casefold() not in low or role.casefold() not in low:
+    if not company_pattern.search(sentence) or not role_pattern.search(sentence):
       continue
     if not re.search(r'\b(?:i was asked|they asked me|interviewer asked|candidate was asked)\b', low):
       continue

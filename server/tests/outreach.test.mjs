@@ -2,8 +2,6 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { draftOutreachParagraph } from '../lib/gemini.mjs';
 
-delete process.env.GOOGLE_API_KEY;
-
 const job = {
   company: 'Acme',
   role: 'Software Engineer',

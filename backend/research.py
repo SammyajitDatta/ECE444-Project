@@ -29,9 +29,13 @@ def discover_sources(company, role, kind):
       response = requests.get('https://api.search.brave.com/res/v1/web/search',
         params={'q': query, 'count': 5}, headers={'X-Subscription-Token': key}, timeout=10)
       response.raise_for_status()
-      results = response.json().get('web', {}).get('results', [])
+      payload = response.json()
+      web = payload.get('web', {}) if isinstance(payload, dict) else None
+      results = web.get('results', []) if isinstance(web, dict) else None
+      if not isinstance(results, list):
+        raise ValueError('Invalid search response')
       matches = dict.fromkeys(item['url'] for item in results
-        if isinstance(item.get('url'), str) and item['url'] not in urls)
+        if isinstance(item, dict) and isinstance(item.get('url'), str) and item['url'] not in urls)
       urls.extend(list(matches)[:limit])
     except (requests.RequestException, ValueError):
       failed = True
@@ -42,13 +46,17 @@ def sentences(text):
   return [s.strip() for s in re.split(r'(?<=[.!?])\s+|\n+', text) if s.strip()]
 
 
+def name_pattern(name):
+  return re.compile(r'(?<!\w)' + re.escape(name) + r'(?!\w)', re.IGNORECASE)
+
+
 def short_excerpts(text):
   return [line for line in dict.fromkeys(sentences(text)) if len(line) <= 600 and 5 <= len(line.split()) <= 55]
 
 
 def company_evidence(text, company, role):
-  company_pattern = re.compile(r'(?<!\w)' + re.escape(company) + r'(?!\w)', re.IGNORECASE)
-  role_pattern = re.compile(r'(?<!\w)' + re.escape(role) + r'(?!\w)', re.IGNORECASE)
+  company_pattern = name_pattern(company)
+  role_pattern = name_pattern(role)
   if not company_pattern.search(text):
     return []
   candidates = short_excerpts(text)

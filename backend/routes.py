@@ -233,7 +233,9 @@ def create_application() -> Response:
         return value
 
     raw_job_type = request.form.get("job_type") or None
-    if raw_job_type and raw_job_type not in {kind.value for kind in JobType}:
+    try:
+        job_type = JobType(raw_job_type) if raw_job_type else None
+    except ValueError:
         raise ApiError("Invalid job type")
     if len(title) > 200 or len(company_name) > 200:
         raise ApiError("Title and company must be at most 200 characters")
@@ -286,7 +288,7 @@ def create_application() -> Response:
     job = Job(
         title=title,
         company_name=company_name,
-        job_type=raw_job_type,
+        job_type=job_type,
         salary_low=salary_low,
         salary_high=salary_high,
         required_skills=required_skills,

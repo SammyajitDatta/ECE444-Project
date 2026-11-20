@@ -4,7 +4,6 @@ import pytest
 import requests
 
 import outreach
-from models import Job, db
 
 
 OUTREACH_URL = '/api/applications/1/outreach'
@@ -21,10 +20,8 @@ def worker(monkeypatch):
     return request
 
 
-def test_outreach_uses_saved_job_and_manually_entered_recruiter(app, signed, headers, worker):
-    with app.app_context():
-        db.session.get(Job, 1).about = POSTING
-        db.session.commit()
+def test_outreach_uses_saved_job_and_manually_entered_recruiter(records, signed, headers, worker):
+    records.job.about = POSTING
 
     response = signed.post(OUTREACH_URL, headers=headers, json={
         'recruiter_name': '  Priya   Shah  ',
@@ -50,10 +47,8 @@ def test_outreach_uses_saved_job_and_manually_entered_recruiter(app, signed, hea
     assert len(response.json['body'].split()) < 100
 
 
-def test_outreach_allows_pasted_description_when_saved_description_missing(app, signed, headers, worker):
-    with app.app_context():
-        db.session.get(Job, 1).about = None
-        db.session.commit()
+def test_outreach_allows_pasted_description_when_saved_description_missing(records, signed, headers, worker):
+    records.job.about = None
 
     missing = signed.post(OUTREACH_URL, headers=headers, json={})
     assert missing.status_code == 400 and 'job description' in missing.json['error']
@@ -109,3 +104,23 @@ def test_outreach_rejects_empty_worker_draft(signed, headers, worker):
     response = signed.post(OUTREACH_URL, headers=headers, json={})
     assert response.status_code == 502
     assert 'subject' not in response.json
+
+
+def test_outreach_override_and_long_labels(signed, headers, records, worker):
+    records.job.title = 'Developer ' * 10
+    records.job.company_name = 'Acme Research ' * 10
+    response = signed.post(OUTREACH_URL, headers=headers, json={'description': POSTING})
+    assert response.status_code == 200
+    assert worker.call_args.kwargs['json']['description'] == POSTING
+    assert len(response.json['subject']) <= 114
+    assert response.json['subject'].count('…') == 2
+
+
+@pytest.mark.parametrize('status', [200, 500])
+def test_outreach_handles_worker_returning_non_json(signed, headers, worker, status):
+    worker.return_value.ok = status == 200
+    worker.return_value.status_code = status
+    worker.return_value.json.side_effect = ValueError('invalid response body')
+    response = signed.post(OUTREACH_URL, headers=headers, json={})
+    assert response.status_code == 502
+    assert 'Could not generate' in response.json['error']

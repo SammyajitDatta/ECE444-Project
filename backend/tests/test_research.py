@@ -5,6 +5,8 @@ import pytest
 import research
 import requests
 from interview import reported_questions
+from models import ApplicationStatus
+from public_web import SourceError
 
 COMPANY='Acme builds software tools for small businesses.'
 REPORT='During my Acme Software Engineer interview, the interviewer asked: "How do you handle a deadlock?"'
@@ -84,20 +86,26 @@ def test_role_excerpt_requires_matching_structured_posting(signed, headers, monk
   if expected:
     assert result.json['items'][0]['source_url'] == url
 
-def test_interview_extraction_and_status(signed,headers,monkeypatch):
-  monkeypatch.setattr(research,'fetch_public',lambda url:(REPORT.encode(),'text/plain',url))
+def test_interview_extraction_and_status(signed,headers,monkeypatch,records):
+  fetch = Mock(side_effect=lambda url: (REPORT.encode(), 'text/plain', url))
+  monkeypatch.setattr(research, 'fetch_public', fetch)
   result=signed.post('/api/applications/1/interview',json={'source_url':'https://example.com/report'},headers=headers)
   assert result.json['items'][0]['text']=='How do you handle a deadlock?'
   assert result.json['items'][0]['source_url']=='https://example.com/report'
-  signed.patch('/api/applications/1/status',json={'status':'applied'},headers=headers)
+  records.application.status = ApplicationStatus.APPLIED
   assert signed.post('/api/applications/1/interview',json={},headers=headers).status_code==409
+  fetch.assert_called_once_with('https://example.com/report')
 
 @pytest.mark.parametrize('text',[
  'Acme Software Engineer practice example: "How do you handle a deadlock?"',
  'Acme Software Engineer interviewer might ask: "How do you handle a deadlock?"',
  'During my Other Software Engineer interview, the interviewer asked: "How do you handle a deadlock?"',
  'During my Acme Designer interview, the interviewer asked: "How do you handle a deadlock?"',
+ 'During my AcmeLabs Software Engineer interview, the interviewer asked: "How do you handle a deadlock?"',
+ 'During my Acme Software Engineering Manager interview, the interviewer asked: "How do you handle a deadlock?"',
  'During my Acme Software Engineer interview, I was not asked: "How do you handle a deadlock?"',
+ 'During my Acme Software Engineer interview, they asked me: "Why?"',
+ 'During my Acme Software Engineer interview, the interviewer asked: "Explain your approach."',
 ])
 def test_unsupported_questions_are_not_reported(text):
   assert reported_questions(text,'Acme','Software Engineer')==[]
@@ -108,6 +116,71 @@ def test_unavailable_and_missing_search_key_are_explicit(signed,headers,monkeypa
   assert result.json['items']==[] and 'No relevant' in result.json['message']
   assert 'not configured' in result.json['notes'][0]
 
-def test_bad_body(signed,headers):
-  for route in ['research','interview']:
-    assert signed.post('/api/applications/1/'+route,json=['bad'],headers=headers).status_code==400
+@pytest.mark.parametrize('route', ['research', 'interview'])
+@pytest.mark.parametrize('body', [['bad'], {'source_url': 1}, {'source_url': 'x' * 2001}])
+def test_invalid_research_requests_stop_before_retrieval(signed, headers, monkeypatch, route, body):
+  retrieve = Mock()
+  monkeypatch.setattr(research, 'fetch_public', retrieve)
+  response = signed.post('/api/applications/1/' + route, json=body, headers=headers)
+  assert response.status_code == 400
+  retrieve.assert_not_called()
+
+
+def test_interview_questions_are_deduplicated_and_bounded():
+  questions = ['How do you handle a deadlock?', 'How did you test your project?',
+               'How do you document errors?', 'What causes a cache miss?']
+  terms = [questions[0], *questions]
+  report = '\n'.join(f'At Acme, the Software Engineer interviewer asked: “{question}”' for question in terms)
+  assert [item['text'] for item in reported_questions(report, 'Acme', 'Software Engineer')] == questions[:3]
+
+
+def test_collect_skips_unavailable_sources_and_duplicate_final_urls(monkeypatch):
+  url = 'https://example.test/company'
+  monkeypatch.setattr(research, 'discover_sources', Mock(return_value=([
+      'https://example.test/unavailable', url, 'https://example.test/redirect',
+  ], '')))
+  retrieve = Mock(side_effect=[SourceError('blocked'), (COMPANY.encode(), 'text/plain', url),
+                               (COMPANY.encode(), 'text/plain', url)])
+  monkeypatch.setattr(research, 'fetch_public', retrieve)
+  evidence, notes = research.collect('Acme', 'Developer', 'company', research.company_evidence)
+  assert len(evidence) == 1
+  assert evidence[0]['source_url'] == url
+  assert evidence[0]['source_name'] == 'example.test'
+  assert notes == ['A source was unavailable, disallowed, or unreadable and was skipped.']
+
+
+def test_invalid_search_payload_preserves_other_discovered_sources(monkeypatch):
+  monkeypatch.setenv('BRAVE_SEARCH_API_KEY', 'test-only')
+  source = 'https://example.test/role'
+  search = Mock(side_effect=[
+      Mock(**{'json.return_value': {'web': None}}),
+      Mock(**{'json.return_value': {'web': {'results': [None, {'url': source}]}}}),
+  ])
+  monkeypatch.setattr(research.requests, 'get', search)
+  urls, note = research.discover_sources('Acme', 'Developer', 'company')
+  assert urls == [source]
+  assert 'unavailable' in note
+
+
+def test_interview_discovery_searches_for_candidate_reports(monkeypatch):
+  monkeypatch.setenv('BRAVE_SEARCH_API_KEY', 'test-only')
+  source = 'https://example.test/report'
+  search = Mock(**{'return_value.json.return_value': {'web': {'results': [{'url': source}]}}})
+  monkeypatch.setattr(research.requests, 'get', search)
+  assert research.discover_sources('Acme', 'Developer', 'interview') == ([source], '')
+  assert 'interview questions candidate experience' in search.call_args.kwargs['params']['q']
+
+
+def test_posting_metadata_without_employer_does_not_create_role_evidence():
+  html = b'<script type="application/ld+json">{"@type":"JobPosting","title":"Developer"}</script>'
+  assert research.posting_role_evidence(html, 'Acme', 'Developer') == []
+
+
+def test_excerpt_selection_limits_and_deduplicates_when_worker_result_is_invalid(monkeypatch):
+  worker = Mock(**{'return_value.json.return_value': {'indices': 'invalid'}})
+  monkeypatch.setattr(research, 'request_worker', worker)
+  first = {'text': 'First excerpt', 'kind': research.COMPANY_EXCERPT}
+  second = {'text': 'Second excerpt', 'kind': research.COMPANY_EXCERPT}
+  duplicate = {'text': 'FIRST EXCERPT', 'kind': research.COMPANY_EXCERPT}
+  third = {'text': 'Third excerpt', 'kind': research.COMPANY_EXCERPT}
+  assert research.select_excerpts([first, duplicate, second, third], 'Acme', 'Developer') == ([first, second], False)
