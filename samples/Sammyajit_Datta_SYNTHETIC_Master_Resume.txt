@@ -1,0 +1,104 @@
+Sammyajit Anindya Datta
+Toronto, Ontario | sammyajit.demo@example.com | (416) 555-0199
+
+SUMMARY
+Computer Engineering student with a focus on embedded software, systems programming, backend services, developer tooling, and data-intensive applications. Experience delivering end-to-end features, designing automated validation tools, tracing cross-layer defects, and explaining technical findings to engineering and business teams. Comfortable working from hardware interfaces through Linux applications and browser-based dashboards. Interested in software engineering, machine learning infrastructure, embedded platforms, and developer productivity.
+
+EDUCATION
+University of Toronto | Toronto, Ontario
+Bachelor of Applied Science, Computer Engineering | September 2022 - Expected May 2027
+- Relevant coursework: Operating Systems, Algorithms and Data Structures, Computer Networks, Software Engineering, Database Systems, Embedded Systems, Digital Logic, and Artificial Intelligence.
+- Developed and documented team software projects in C, C++, Python, SQL, and JavaScript across concurrent programming, database design, optimization, and device communication.
+- Academic achievement: Departmental Design Showcase finalist, 2025 (fictional sample achievement).
+
+EXPERIENCE
+Embedded Software Engineering Intern | Aurora Signal Systems (fictional organization) | Burlington, ON | Sep 2025 - Aug 2026
+- Built Linux-based embedded C++ services that exchanged structured commands with hardware modules and exposed diagnostic status through a browser interface.
+- Developed an automated device health-check tool that collected power, interface, and temperature telemetry from simulated boards, cutting repeated bench setup tasks by 45 percent.
+- Investigated intermittent integration failures by comparing FPGA register traces, software logs, and network packet captures; documented reproducible test cases for the firmware team.
+- Designed Python regression scripts to validate peripheral detection, configuration persistence, and error recovery over multiple firmware revisions.
+- Implemented a command-line diagnostics utility with explicit timeouts, structured error reporting, and clear operator messages.
+- Collaborated with firmware, hardware, and QA developers to reproduce faults, review patches, and confirm acceptance tests before internal releases.
+- Wrote onboarding documentation for build-server access, cross-compilation, debugging workflows, and test-fixture setup.
+
+Software Engineering Intern | Northbridge Developer Tools (fictional organization) | Toronto, ON | May 2024 - Aug 2024
+- Created a TypeScript and Node.js service for ingesting test results from internal tools and exposing a searchable REST API to engineering dashboards.
+- Improved a PostgreSQL query path using composite indexes and bounded pagination, decreasing median response latency from 420 milliseconds to 170 milliseconds in a local benchmark.
+- Implemented React components for filtering build failures by repository, branch, severity, and owner, with keyboard-friendly table controls.
+- Added Jest unit tests and API contract tests for authentication, pagination, invalid payloads, and partial service outages.
+- Helped migrate a legacy CSV report pipeline to structured JSON events with versioned schemas and documented backward compatibility.
+- Participated in code reviews, sprint planning, and technical design discussions, and wrote concise release notes for user-facing changes.
+
+Supply Chain Analytics Intern | Maple Ridge Foods (fictional organization) | Toronto, ON | May 2023 - Aug 2023
+- Replaced repetitive spreadsheet consolidation with Python scripts using pandas and OpenPyXL, reducing a daily reporting routine from 50 minutes to 12 minutes in a fictional test scenario.
+- Built reusable validation steps to catch malformed supplier records, duplicated shipment identifiers, missing dates, and inconsistent unit conversions.
+- Created Power BI pages showing inventory movements, shipment delays, and exception trends for operations reviews.
+- Documented report inputs, transformation rules, and troubleshooting procedures so analysts could run the tools without developer support.
+- Presented weekly summaries to a cross-functional group of analysts and operations leads and incorporated feedback into the next report iterations.
+
+Part-Time Technical Support Developer | Cedar Lake Lab (fictional organization) | Toronto, ON | Sep 2022 - Apr 2023
+- Maintained small Flask services used for internal student lab booking, status reporting, and CSV data exports.
+- Created a simple SQLite-backed audit trail for equipment checkouts, adding field validation and recovery for interrupted requests.
+- Reduced repeated troubleshooting questions by publishing step-by-step runbooks and a command-line environment checker.
+
+PROJECTS
+ApplyPilot - AI-Assisted Resume and Application Manager | React, Node.js, Gemini API, pdf-lib | 2026
+- Built a React application supporting manual master-resume editing, selectable resume layouts, job description entry, and browser-embedded PDF previews.
+- Created server-side endpoints for structured AI generation, input validation, and source-backed resume verification without exposing private API keys to the browser.
+- Implemented a page-aware PDF renderer with selectable text, clickable hyperlinks, single-column reading order, and downloadable one-page output.
+- Developed test fixtures covering unsupported claims, missing applicant sections, inconsistent input, and resume overflow conditions.
+
+CityGraph Route Optimizer | C++17, OpenStreetMap Data, A*, Dijkstra, Graph Algorithms | 2025
+- Implemented shortest-path queries over a road-network graph using Dijkstra and A*, with turn costs and route reconstruction.
+- Designed a simulated annealing search routine to improve delivery route sequences under a fixed computation budget.
+- Built an interactive map visualization with search suggestions, keyboard interactions, and clear route overlays.
+- Profiled graph data structures and reduced repeated node lookups through indexing and caching strategies.
+
+TinyKernel Memory Lab | C, OS/161, Concurrency, Virtual Memory | 2025
+- Implemented process lifecycle operations, including fork, exec, wait, and heap growth, in an instructional UNIX-like kernel environment.
+- Built locks, condition variables, and semaphores and used concurrency tests to identify race conditions and missed wakeups.
+- Developed two-level page table handling, demand paging, TLB refill paths, and basic swap bookkeeping for memory-management experiments.
+- Traced edge-case failures with kernel logging and focused regression tests to narrow down faults in page eviction and cleanup.
+
+TeamForge Work Planner | React, Express, MongoDB, REST | 2024
+- Built a browser-based project board with editable tasks, assignments, labels, due dates, and a searchable activity history.
+- Implemented REST endpoints with schema validation and consistent error responses across task and member operations.
+- Wrote integration tests for filtering, updates, invalid IDs, and concurrent task edits using a test database.
+- Added accessible forms, descriptive empty states, and clear confirmations for destructive operations.
+
+Inventory Forecast Experiment | Python, scikit-learn, pandas, matplotlib | 2024
+- Compared baseline moving-average models with gradient-boosted regression on synthetic inventory demand data.
+- Organized time-aware training and evaluation splits to avoid accidental leakage from future records.
+- Built a simple model evaluation report summarizing forecast error, key assumptions, and cases with unstable predictions.
+- Created reproducible data-cleaning scripts and a documented configuration file for experiment parameters.
+
+Bluetooth Device Console | ESP32, C++, Bluetooth, Serial | 2024
+- Created a small microcontroller program that advertises a Bluetooth control service and exchanges commands with a host device.
+- Implemented a serial command protocol with explicit connection states, retry behavior, and validation of unsupported operations.
+- Built test routines for device discovery, connection loss, volume-control events, and reconnection scenarios.
+
+Class Schedule and Course Tracker | Flask, MySQL, JavaScript, HTML, CSS | 2023
+- Developed a web application for organizing academic schedules, notes, assignment reminders, and bookmarked resources.
+- Designed a relational schema for courses, users, deadlines, and reminders and used SQL joins for schedule queries.
+- Implemented forms with server-side validation, date sorting, and editable course metadata.
+
+PacketLab UDP Simulator | C, Linux Sockets, Networking | 2023
+- Created a multi-client UDP protocol simulator that parses datagrams, tracks client sessions, and sends structured acknowledgments.
+- Added defensive bounds checks, predictable error codes, configurable timeouts, and socket resource cleanup.
+- Used packet traces and scripted test inputs to reproduce dropped, duplicated, and out-of-order messages.
+
+TECHNICAL SKILLS
+Programming languages: C, C++, Python, Java, JavaScript, TypeScript, SQL, Bash, MATLAB, Verilog.
+Frontend: React, HTML, CSS, responsive layout, accessible forms, component testing.
+Backend and databases: Node.js, Express, Flask, PostgreSQL, MySQL, MongoDB, SQLite, REST APIs.
+Systems and embedded: Linux, POSIX, OS/161, ESP32, UART, Bluetooth, debugging, packet analysis, threading, synchronization.
+Automation and data: pandas, OpenPyXL, Power BI, scikit-learn, matplotlib, report generation, CLI tools.
+Tools and workflows: Git, GitHub, VS Code, CI pipelines, automated testing, documentation, code reviews, issue tracking.
+
+AWARDS
+Synthetic Design Showcase Finalist | 2025 - Fictional example award for interface usability and validation tooling.
+Community Hack Demo | 2024 - Fictional sample recognition for a collaborative campus scheduling prototype.
+
+LINKS FROM MASTER RESUME
+LinkedIn: https://www.linkedin.com/in/sammydatta/
+GitHub: https://github.com/SammyajitDatta

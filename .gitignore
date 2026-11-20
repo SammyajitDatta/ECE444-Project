@@ -1,4 +1,45 @@
-.vscode/
-data/
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# JavaScript dependencies and build output
 node_modules/
+dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+
+# Python environments, bytecode, and tool caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local app data and uploads
+data/
 uploads/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Logs and coverage reports
+logs/
+*.log
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
