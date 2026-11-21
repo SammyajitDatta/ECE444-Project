@@ -93,7 +93,7 @@ export default function ResumeStudioPage(){
   function updateMaster(value){setMaster(value);setError('');resetOutput();}
   function updateJob(value){setJob(value);setError('');resetOutput();}
   async function request(endpoint,options){
-    let res;try{res=await apiFetch(endpoint,options);}catch{throw new Error('Cannot reach the ApplyPilot server. Run npm run dev from the project root.');}
+    let res;try{res=await apiFetch(endpoint,options);}catch{throw new Error('Cannot reach the ApplyPilot API. Start the Flask service from the backend folder.');}
     const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'An unexpected error occurred.');return data;
   }
   async function uploadPdf(event){

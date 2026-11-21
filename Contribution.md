@@ -66,7 +66,7 @@ Unless otherwise specified by the project, please observe the following conventi
 If supported by the project, run the following command to check code style:
 
 ```bash
-npm run lint
+npm --prefix frontend/app run lint
 ```
 
 Follow the existing project conventions when a particular language, framework, or tool requires a different style.

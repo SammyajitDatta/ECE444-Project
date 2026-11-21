@@ -3,7 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": { "dev": "node --watch index.mjs", "start": "node index.mjs" },
+  "scripts": {
+    "dev": "node --watch index.mjs",
+    "start": "node index.mjs",
+    "test": "node --import ./tests/offline.mjs --test tests/*.test.mjs"
+  },
   "dependencies": {
     "@google/genai": "^1.30.0",
     "dotenv": "^16.6.1",

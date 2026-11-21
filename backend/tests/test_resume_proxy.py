@@ -42,4 +42,4 @@ def test_proxy_worker_timeout_returns_actionable_error(signed, headers, monkeypa
     monkeypatch.setattr(resume_proxy, 'request_worker', Mock(side_effect=requests.Timeout))
     response = signed.post('/api/generate', json={}, headers=headers)
     assert response.status_code == 503
-    assert 'npm run dev' in response.json['error']
+    assert 'Start the Node worker' in response.json['error']

@@ -22,4 +22,4 @@ def resume(action):
       content_type=request.content_type or 'application/json', timeout=90)
     return Response(response.content, status=response.status_code, content_type='application/json')
   except requests.RequestException:
-    return jsonify(error='Resume service is unavailable. Start all services with npm run dev.'), 503
+    return jsonify(error='Resume service is unavailable. Start the Node worker from the server folder.'), 503
