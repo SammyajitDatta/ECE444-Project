@@ -66,8 +66,8 @@ npm run dev
 ```
 
 Open http://localhost:5173. This starts Flask on 5000, the private resume worker on
-127.0.0.1:3001, and Vite on 5173. The legacy standalone client is retained for source
-compatibility; use the integrated root command, not the old standalone dev command.
+127.0.0.1:3001, and Vite on 5173. Resume Studio is built into the main frontend
+and is available under **Resume studio** after signing in.
 
 Google manages passwords and account recovery. Signing out ends the ApplyPilot session,
 not the user's Google browser session. This does not implement UofT Microsoft SSO.

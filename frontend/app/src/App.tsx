@@ -1,12 +1,12 @@
-import './resume.css';
 import { lazy, Suspense, useEffect, useState } from 'react';
-const ResumePage = lazy(() => import('../../../client/src/App.jsx'));
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import ApplicationsPage from './pages/ApplicationsPage';
 import ApplicationDetailPage from './pages/ApplicationDetailPage';
 import CreateApplicationPage from './pages/CreateApplicationPage';
 import { apiFetch, setCsrf } from './session';
 import './shell.css';
+
+const ResumeStudioPage = lazy(() => import('./pages/ResumeStudioPage.jsx'));
 
 type User = { id: number; name: string; email: string };
 export default function App() {
@@ -47,7 +47,7 @@ export default function App() {
         <Route path="/applications/:id/preparation" element={<ApplicationDetailPage view="preparation" />} />
         <Route path="/applications/:id/outreach" element={<ApplicationDetailPage view="outreach" />} />
         <Route path="/create" element={<CreateApplicationPage />} />
-        <Route path="/resume" element={<div className="resume-workspace"><Suspense fallback={<p role="status">Loading resume studio…</p>}><ResumePage /></Suspense></div>} />
+        <Route path="/resume" element={<div className="resume-workspace"><Suspense fallback={<p role="status">Loading resume studio…</p>}><ResumeStudioPage /></Suspense></div>} />
         <Route path="*" element={<main className="welcome"><h1>Page not found</h1><NavLink to="/">Return to applications</NavLink></main>} />
       </Routes>
     </BrowserRouter>

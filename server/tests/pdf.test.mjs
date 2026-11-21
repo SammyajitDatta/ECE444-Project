@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PDFDocument } from 'pdf-lib';
-import { buildResumePdf } from '../../client/src/lib/pdf.js';
+import { buildResumePdf } from '../../frontend/app/src/lib/resumePdf.js';
 
 const points = (n) => Array.from({ length: n }, (_, i) => ({
   source: `Built project component ${i + 1} using modern JavaScript tools.`,

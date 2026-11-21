@@ -1,5 +1,5 @@
 import { PDFDocument, PDFName, PDFString, StandardFonts, rgb } from 'pdf-lib';
-import { cleanContactLine, matchingProjectLink, linkInfo } from '../../../shared/resume-links.mjs';
+import { cleanContactLine, matchingProjectLink, linkInfo } from '../../../../shared/resume-links.mjs';
 
 // Single-column US Letter layouts with predictable baseline spacing.
 // Every line is measured before it is drawn; no absolute positioning is used

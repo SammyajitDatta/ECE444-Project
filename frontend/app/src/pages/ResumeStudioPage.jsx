@@ -1,4 +1,5 @@
-import { apiFetch } from '../../frontend/app/src/session';
+import { apiFetch } from '../session';
+import '../resume.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDown, ArrowRight, ArrowUpRight, BadgeCheck, BriefcaseBusiness, Check, CheckCircle2,
@@ -6,8 +7,8 @@ import {
   FileUp, Github, Link2, LoaderCircle, LockKeyhole, Mail, Menu, PencilLine, RotateCcw,
   ShieldCheck, Sparkles, WandSparkles, X
 } from 'lucide-react';
-import { buildResumePdf } from './lib/pdf.js';
-import { extractResumeLinks, organizeMasterText } from '../../shared/resume-links.mjs';
+import { buildResumePdf } from '../lib/resumePdf.js';
+import { extractResumeLinks, organizeMasterText } from '../../../../shared/resume-links.mjs';
 
 const TEMPLATES = [
   { id: 'modern', number: '01', title: 'Masthead', tag: 'Confident & structured', description: 'Forest-green header, crisp lettering, and warm copper details.', swatch: 'indigo' },
@@ -57,7 +58,7 @@ function ResumeCard({style}){
   </div>;
 }
 
-export default function App(){
+export default function ResumeStudioPage(){
   const [master,setMaster]=useState('');
   const [filename,setFilename]=useState('');
   const [template,setTemplate]=useState('modern');
